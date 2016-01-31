@@ -1,54 +1,41 @@
 module JSONPointer.Model
+(
+  JSONPointer,
+  run,
+  atIndexOrKey,
+)
 where
 
 import JSONPointer.Prelude hiding (or)
-import qualified JSONQuery
 import qualified Data.Attoparsec.Text
 
 
 -- |
 -- A model of JSONPointer
--- represented in terms of a JSONQuery spec.
+-- represented in terms of a monoid.
 newtype JSONPointer =
-  JSONPointer (forall a. JSONQuery.Value a -> JSONQuery.Value a)
+  JSONPointer (forall m. Monoid m => (Maybe Int -> Text -> m) -> m)
 
 instance Monoid JSONPointer where
   {-# INLINE mempty #-}
   mempty =
-    JSONPointer id
+    JSONPointer $ const mempty
   {-# INLINE mappend #-}
   mappend (JSONPointer fn1) (JSONPointer fn2) =
-    JSONPointer $ fn1 . fn2
+    JSONPointer $ \handler -> fn1 handler <> fn2 handler
 
 -- |
--- Given a JSON Pointer and a value parser to apply
--- at the location pointed to,
--- produces a parser of the context value.
+-- Given a JSON Pointer specification and a function,
+-- which interprets a possible index or a textual key into a monoid,
+-- results in such a monoid.
 {-# INLINE run #-}
-run :: JSONPointer -> JSONQuery.Value a -> JSONQuery.Value a
+run :: Monoid m => JSONPointer -> (Maybe Int -> Text -> m) -> m
 run (JSONPointer fn) =
   fn
 
-or :: JSONPointer -> JSONPointer -> JSONPointer
-or (JSONPointer a) (JSONPointer b) =
-  JSONPointer $ \c -> a c <|> b c
-
-atIndexOrKey :: Text -> JSONPointer
-atIndexOrKey indexOrKey =
-  parsingIndex indexOrKey (atKey indexOrKey) (\n -> or (atIndex n) (atKey indexOrKey))
-  where
-    parsingIndex :: Text -> a -> (Int -> a) -> a
-    parsingIndex input empty pure =
-      either (const empty) pure $
-      Data.Attoparsec.Text.parseOnly parser input
-      where
-        parser =
-          Data.Attoparsec.Text.decimal <* Data.Attoparsec.Text.endOfInput
-
-atIndex :: Int -> JSONPointer
-atIndex index =
-  JSONPointer $ JSONQuery.arrayLookups . JSONQuery.atIndex index
-
-atKey :: Text -> JSONPointer
-atKey key =
-  JSONPointer $ JSONQuery.objectLookups . JSONQuery.atKey key
+-- |
+-- Constructs JSON Pointer from a possible array index and a textual key.
+{-# INLINE atIndexOrKey #-}
+atIndexOrKey :: Maybe Int -> Text -> JSONPointer
+atIndexOrKey index key =
+  JSONPointer $ \handler -> handler index key

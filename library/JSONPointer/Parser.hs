@@ -10,7 +10,6 @@ where
 
 import JSONPointer.Prelude
 import Data.Attoparsec.Text
-import qualified JSONQuery
 import qualified Data.Text
 import qualified JSONPointer.Model as Model
 
@@ -30,7 +29,12 @@ jsonPointer =
 
 referenceToken :: Parser Model.JSONPointer
 referenceToken =
-  char '/' *> (Model.atIndexOrKey . Data.Text.pack <$> referenceTokenChars)
+  char '/' *> (Model.atIndexOrKey <$> optional index <*> key)
+  where
+    index =
+      decimal <* shouldFail (notChar '/')
+    key =
+      Data.Text.pack <$> referenceTokenChars
 
 -- |
 -- Reference token chars as per the definition in the JSON Pointer spec.
