@@ -3,10 +3,10 @@ name:
 version:
   0.1
 synopsis:
-  JSON Pointer interpretation utilities
+  JSON Pointer parsing and interpretation utilities
 description:
-  This library produces a model, which is supposed to be
-  later interpreted by some specific parser.
+  This library provides a parser and a model,
+  which is supposed to be later interpreted by the client libraries.
 category:
   Data, JSON, Parsing
 homepage:
