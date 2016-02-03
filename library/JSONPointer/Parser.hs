@@ -29,12 +29,18 @@ jsonPointer =
 
 referenceToken :: Parser Model.JSONPointer
 referenceToken =
-  char '/' *> (Model.atIndexOrKey <$> optional index <*> key)
+  char '/' *> (keyToModel <$> key)
   where
-    index =
-      decimal <* shouldFail (notChar '/')
     key =
       Data.Text.pack <$> referenceTokenChars
+    keyToModel !text =
+      Model.atIndexOrKey (textToIndexMaybe text) text
+    textToIndexMaybe =
+      either (const Nothing) Just .
+      parseOnly parser
+      where
+        parser =
+          decimal <* endOfInput
 
 -- |
 -- Reference token chars as per the definition in the JSON Pointer spec.
