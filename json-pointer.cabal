@@ -7,10 +7,6 @@ synopsis:
 description:
   This library produces a model, which is supposed to be
   later interpreted by some specific parser.
-  One such interpreter is provided by
-  <http://hackage.haskell.org/package/json-query-json-pointer the "json-query-json-pointer" library>,
-  which transforms JSON Pointer into a
-  <http://hackage.haskell.org/package/json-query "json-query"> specification.
 category:
   Data, JSON, Parsing
 homepage:
