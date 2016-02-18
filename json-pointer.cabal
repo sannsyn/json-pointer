@@ -1,7 +1,7 @@
 name:
   json-pointer
 version:
-  0.1
+  0.1.1
 synopsis:
   JSON Pointer parsing and interpretation utilities
 description:

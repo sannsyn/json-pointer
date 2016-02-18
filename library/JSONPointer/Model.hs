@@ -8,6 +8,7 @@ where
 
 import JSONPointer.Prelude hiding (or)
 import qualified Data.Attoparsec.Text
+import qualified Data.Text
 
 
 -- |
@@ -23,6 +24,11 @@ instance Monoid JSONPointer where
   {-# INLINE mappend #-}
   mappend (JSONPointer fn1) (JSONPointer fn2) =
     JSONPointer $ \handler -> fn1 handler <> fn2 handler
+
+instance Show JSONPointer where
+  showsPrec _ (JSONPointer impl) =
+    appEndo $
+    impl (\_ text -> Endo (showString "/" . showString (Data.Text.unpack text)))
 
 -- |
 -- Given a JSON Pointer specification and a function,
