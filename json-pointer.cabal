@@ -1,7 +1,7 @@
 name:
   json-pointer
 version:
-  0.1.1
+  0.1.2
 synopsis:
   JSON Pointer parsing and interpretation utilities
 description:
@@ -54,4 +54,4 @@ library
     --
     text == 1.*,
     --
-    base-prelude >= 0.1.21 && < 0.2
+    base-prelude >= 0.1.21 && < 2
