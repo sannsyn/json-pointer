@@ -17,6 +17,9 @@ import qualified Data.Text
 newtype JSONPointer =
   JSONPointer (forall m. Monoid m => (Maybe Int -> Text -> m) -> m)
 
+instance Semigroup JSONPointer where
+  (<>) = mappend
+
 instance Monoid JSONPointer where
   {-# INLINE mempty #-}
   mempty =
