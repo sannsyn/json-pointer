@@ -49,9 +49,7 @@ library
     JSONPointer.Parser
     JSONPointer.Model
   build-depends:
-    -- 
     attoparsec >= 0.13 && < 0.14,
-    --
-    text == 1.*,
-    --
-    base-prelude >= 0.1.21 && < 2
+    base >=4.11 && <5,
+    base-prelude >= 0.1.21 && < 2,
+    text == 1.*
